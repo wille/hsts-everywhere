@@ -1,5 +1,5 @@
 // Default max-age 1 hour in seconds
-var max-age = "3600";
+var max_age = "3600";
 
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
@@ -15,7 +15,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 		if (exists) {
 			var rule = {
 				"name": "Strict-Transport-Security",
-				"value": "max-age=" + max-age + ";"
+				"value": "max-age=" + max_age + ";"
 			};
 			
 			details.responseHeaders.push(rule);
