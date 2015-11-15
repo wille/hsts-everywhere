@@ -1,7 +1,11 @@
 chrome.webRequest.onHeadersReceived.addListener(
-    function(details) {
-		
-        return { };
+	function(details) {
+		var rule = {
+			"name": "Strict-Transport-Security",
+			"value": "max-age=3600;"
+		};
+		details.responseHeaders.push(rule);
+		return {responseHeaders: details.responseHeaders};
     },
     {
         urls: [
