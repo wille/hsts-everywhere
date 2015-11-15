@@ -1,5 +1,5 @@
-// Default max-age 1 hour in seconds
-var max_age = "3600";
+// Default max-age 6 months in seconds
+var max_age = "15570000";
 
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
