@@ -6,7 +6,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 		var exists = false;
 		
 		for (var i = 0; i < details.responseHeaders.length; i++) {
-			if (details.responseHeaders[i].name === "Strict-Transport-Security") {
+			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security") {
 				exists = true;
 				break;
 			}
