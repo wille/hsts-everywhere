@@ -12,7 +12,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 			}
 		}
 		
-		if (exists) {
+		if (!exists) {
 			var rule = {
 				"name": "Strict-Transport-Security",
 				"value": "max-age=" + max_age + ";"
