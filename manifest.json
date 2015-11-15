@@ -6,7 +6,7 @@
 		"scripts": ["background.js"]
 	},
 	"icons": {
-		//"32": "icon32.png"
+		"128": "icon.png"
 	},
 	"manifest_version": 2,
 	"permissions": [
