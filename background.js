@@ -9,7 +9,7 @@ chrome.webRequest.onHeadersReceived.addListener(
     },
     {
         urls: [
-			"https://*"
+			"https://*/*"
 		],
         types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other"]
     },
