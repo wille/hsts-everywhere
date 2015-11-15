@@ -1,11 +1,26 @@
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
-		var rule = {
-			"name": "Strict-Transport-Security",
-			"value": "max-age=3600;"
-		};
-		details.responseHeaders.push(rule);
-		return {responseHeaders: details.responseHeaders};
+		var exists = false;
+		
+		for (var i = 0; i < details.responseHeaders.length; i++) {
+			if (details.responseHeaders[i].name === "Strict-Transport-Security") {
+				exists = true;
+				break;
+			}
+		}
+		
+		if (exists) {
+			var rule = {
+				"name": "Strict-Transport-Security",
+				"value": "max-age=3600;"
+			};
+			
+			details.responseHeaders.push(rule);
+			return {responseHeaders: details.responseHeaders};
+		} else {
+			// Do not modify anything
+			return { }
+		}
     },
     {
         urls: [
