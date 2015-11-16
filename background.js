@@ -1,9 +1,22 @@
 // Default max-age 6 months in seconds
 var max_age = "15570000";
 
+var ignore = [
+	"www.aftonbladet.se"
+];
+
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
 		var exists = false;
+		
+		var x = document.createElement("a");
+		x.href = details.url;
+		
+		for (var i = 0; i < ignore.length; i++) {
+			if (x.hostname === ignore[i]) {
+				return { };
+			}
+		}
 		
 		for (var i = 0; i < details.responseHeaders.length; i++) {
 			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security") {
