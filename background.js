@@ -2,7 +2,45 @@
 var max_age = "15570000";
 
 var ignore = [
-	"www.aftonbladet.se"
+"www.aftonbladet.se",	
+"9gag.com",
+"pastebin.com",
+"nitroflare.com",
+"www.metafilter.com",
+"www.sarizeybekhaber.com.tr",
+"www.grandbux.net",
+"www.svt.se",
+"www.hsbc.com",
+"www.avvo.com",
+"www.lexiadz.com",
+"www.adzbazar.com",
+"fodors.com",
+"www.chacha.com",
+"www.skapiec.pl",
+"www.lunapic.com",
+"zivame.com",
+"www.gameinformer.com",
+"brighthouse.com",
+"www.stafaband.info",
+"forum.uaewomen.net",
+"www.ultimateclixx.com",
+"www.egotastic.com",
+"www.sugobbs.com",
+"www.thairath.co.th",
+"fishki.pl",
+"zakupka.com",
+"www.usu.edu",
+"uncc.edu",
+"www.egotasticallstars.com",
+"cinestar.de",
+"www.clixblue.com",
+"soccer-king.jp",
+"bonusb2c.com",
+"www.etouches.com",
+"www.pixiz.com",
+"www.justcloud.com",
+"www.carsguide.com.au",
+"activerain.com"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
