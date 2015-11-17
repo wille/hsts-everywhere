@@ -45,42 +45,25 @@ var ignore = [
 
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
-		var exists = false;
-		
-		var x = document.createElement("a");
-		x.href = details.url;
-		
-		for (var i = 0; i < ignore.length; i++) {
-			if (x.hostname === ignore[i]) {
-				return { };
-			}
-		}
+	
+		if ( ignore.indexOf(new URL(details.url).hostname) > -1 )
+			return { };
 		
 		for (var i = 0; i < details.responseHeaders.length; i++) {
-			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security") {
-				exists = true;
-				break;
-			}
-		}
-		
-		if (!exists) {
-			var rule = {
-				"name": "Strict-Transport-Security",
-				"value": "max-age=" + max_age + ";"
-			};
-			
-			details.responseHeaders.push(rule);
-			return {responseHeaders: details.responseHeaders};
-		} else {
-			// Do not modify anything
+			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security")
 			return { };
 		}
-    },
-    {
-        urls: [
-			"https://*/*"
-		],
-        types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other"]
-    },
-    ["blocking", "responseHeaders" ]
+		
+		details.responseHeaders.push({
+			"name": "Strict-Transport-Security",
+			"value": "max-age=" + max_age + ";"
+		});
+
+		return {responseHeaders: details.responseHeaders};
+	},
+	{
+		urls: ["https://*/*"],
+		types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other"]
+	},
+	["blocking", "responseHeaders" ]
 );
