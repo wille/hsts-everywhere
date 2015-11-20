@@ -4,6 +4,7 @@ var max_age = "15570000";
 var ignore = [
 "api.twitch.tv",	
 "www.aftonbladet.se",	
+"streams.twitch.tv",
 "9gag.com",
 "pastebin.com",
 "nitroflare.com",
