@@ -44,7 +44,9 @@ var ignore = [
 "www.pixiz.com",
 "www.justcloud.com",
 "www.carsguide.com.au",
-"activerain.com"
+"activerain.com",
+"www.seek.com.au",
+"www.liteneasy.com.au"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
