@@ -1,6 +1,6 @@
 {
 	"name": "HSTS Enforcer",
-	"version": "0.3",
+	"version": "0.3.1",
 	"description": "Forces all sites to use HSTS",
 	"background": { 
 		"scripts": ["background.js"]
