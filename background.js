@@ -46,7 +46,8 @@ var ignore = [
 "www.carsguide.com.au",
 "activerain.com",
 "www.seek.com.au",
-"www.liteneasy.com.au"
+"www.liteneasy.com.au",
+"store.vmware.com"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
