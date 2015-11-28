@@ -49,7 +49,8 @@ var ignore = [
 "www.liteneasy.com.au",
 "store.vmware.com",
 "imgbox.com",
-"www.webhallen.com"
+"www.webhallen.com",
+"arstechnica.com"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
