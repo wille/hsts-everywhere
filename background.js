@@ -51,7 +51,8 @@ var ignore = [
 "imgbox.com",
 "www.webhallen.com",
 "arstechnica.com",
-"shop.oreilly.com"
+"shop.oreilly.com",
+"www.apple.com"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
