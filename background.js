@@ -53,7 +53,8 @@ var ignore = [
 "arstechnica.com",
 "shop.oreilly.com",
 "www.apple.com",
-"www.amazon.com"
+"www.amazon.com",
+"www.petbarn.com.au"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
