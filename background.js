@@ -54,7 +54,8 @@ var ignore = [
 "shop.oreilly.com",
 "www.apple.com",
 "www.amazon.com",
-"www.petbarn.com.au"
+"www.petbarn.com.au",
+"www.slideshare.net"
 ];
 
 chrome.webRequest.onHeadersReceived.addListener(
