@@ -1,5 +1,5 @@
 {
-	"name": "HSTS Enforcer",
+	"name": "HSTS Everywhere",
 	"version": "0.3.4",
 	"description": "Forces all sites to use HSTS",
 	"background": { 
