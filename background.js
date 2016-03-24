@@ -9,12 +9,17 @@ var ignore = [
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
 	
-		if ( ignore.indexOf(new URL(details.url).hostname) > -1 )
+		if ( ignore.indexOf(new URL(details.url).hostname) > -1 ) {
+      console.log("1");
 			return { };
+    }
 		
 		for (var i = 0; i < details.responseHeaders.length; i++) {
-			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security")
-			return { };
+//      console.log(details.responseHeaders[i].name);
+			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security") {
+        console.log("2");
+  			return { };
+      }
 		}
 		
 		details.responseHeaders.push({
@@ -22,6 +27,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 			"value": "max-age=" + max_age + ";"
 		});
 
+    console.log("3");
 		return {responseHeaders: details.responseHeaders};
 	},
 	{

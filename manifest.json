@@ -1,6 +1,6 @@
 {
 	"name": "HSTS Everywhere",
-	"version": "0.3.5",
+	"version": "0.3.5.1",
 	"description": "Forces all sites to use HSTS",
 	"background": { 
 		"scripts": ["background.js"]
