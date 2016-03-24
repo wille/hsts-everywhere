@@ -1,6 +1,7 @@
 // Default max-age 6 months in seconds
 var max_age = "15570000";
 
+//NB: I left these two in 'ignore' as samples, but since I'm planning on permanently using HTTPS-Everywhere with 'Block HTTP requests', I won't be doing any HTTP requests ever, and thus I can afford to also set 'includeSubDomains' below.
 var ignore = [
 "pastebin.com",
 "arstechnica.com",
@@ -25,6 +26,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 		details.responseHeaders.push({
 			"name": "Strict-Transport-Security",
 			"value": "max-age=" + max_age + "; includeSubDomains" //src: https://www.chromium.org/hsts
+        //check HSTS status: under HSTS(while Capture is enabled!) then 'Query domain' from here chrome://net-internals/#hsts If "*_upgrade_mode: STRICT" then HSTS is on! How to interpret: https://security.stackexchange.com/questions/68883/checking-domains-hsts-status
 		});
 
     console.log("3");
