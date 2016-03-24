@@ -27,6 +27,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 			"name": "Strict-Transport-Security",
 			"value": "max-age=" + max_age + "; includeSubDomains" //src: https://www.chromium.org/hsts
         //check HSTS status: under HSTS(while Capture is enabled!) then 'Query domain' from here chrome://net-internals/#hsts If "*_upgrade_mode: STRICT" then HSTS is on! How to interpret: https://security.stackexchange.com/questions/68883/checking-domains-hsts-status
+        //also note, if 'broken HTTPS' (eg. https://rustbyexample.com since it's hosted by github) then the above query will yield 'Not found'
 		});
 
     console.log("3");
