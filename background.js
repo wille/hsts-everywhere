@@ -7,18 +7,22 @@ var ignore = [
 "arstechnica.com",
 ];
 
+//Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
+
 chrome.webRequest.onHeadersReceived.addListener(
 	function(details) {
 	
-		if ( ignore.indexOf(new URL(details.url).hostname) > -1 ) {
-      console.log("1");
+    hostn = new URL(details.url).hostname;
+    fullh = hostn+" (full: "+details.url+" )";
+		if ( ignore.indexOf(hostn) > -1 ) {
+      console.log("Host in ignore list: "+fullh); //eg. https://pastebin.com
 			return { };
     }
 		
 		for (var i = 0; i < details.responseHeaders.length; i++) {
 //      console.log(details.responseHeaders[i].name);
 			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security") {
-        console.log("2");
+        console.log("HSTS already set in host's response: "+fullh+" "+details.responseHeaders[i].value); //eg. grc.com  max-age=31536000; preload
   			return { };
       }
 		}
@@ -30,7 +34,7 @@ chrome.webRequest.onHeadersReceived.addListener(
         //also note, if 'broken HTTPS' (eg. https://rustbyexample.com since it's hosted by github) then the above query will yield 'Not found'
 		});
 
-    console.log("3");
+    console.log("Forcing HSTS for: "+fullh+" "+details.responseHeaders[details.responseHeaders.length-1].value);
 		return {responseHeaders: details.responseHeaders};
 	},
 	{
