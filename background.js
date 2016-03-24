@@ -24,7 +24,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 		
 		details.responseHeaders.push({
 			"name": "Strict-Transport-Security",
-			"value": "max-age=" + max_age + ";"
+			"value": "max-age=" + max_age + "; includeSubDomains" //src: https://www.chromium.org/hsts
 		});
 
     console.log("3");
