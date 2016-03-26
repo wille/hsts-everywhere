@@ -1,5 +1,37 @@
 // Default max-age 6 months in seconds
 var max_age = "15570000";
+var loglevels={};
+
+//src: https://stackoverflow.com/questions/1125256/how-to-create-a-constant-in-javascript
+function setConstant(obj, key, value) {//eg. setConstant(loglevels, "NONE", 0);
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: false,
+    writable: false,
+    value: value,
+  });
+}
+
+setConstant(loglevels, "NONE", 00);
+setConstant(loglevels, "ERR", 10);
+setConstant(loglevels, "ERROR", 10);
+setConstant(loglevels, "WARN", 20);
+setConstant(loglevels, "INFO", 30);
+setConstant(loglevels, "VERB", 40);
+setConstant(loglevels, "VERBOSE", 40);
+setConstant(loglevels, "DEBUG", 50);
+//set this in Console! eg. loglevel = logelevels.DEBUG
+var loglevel = loglevels.NONE;//don't log anything by default, I read somewhere in passing that it's slow and saved to disk by chromium...
+
+function log(level, msg) {//should never pass NONE level when calling!
+  if (level <= loglevel) {
+    if (level == loglevels.WARN) {
+      console.warn(msg);
+    }else{
+      console.log(msg);
+    }
+  }
+}
 
 //NB: I left these two in 'ignore' as samples, but since I'm planning on permanently using HTTPS-Everywhere with 'Block HTTP requests', I won't be doing any HTTP requests ever, and thus I can afford to also set 'includeSubDomains' below.
 //This is a list of hosts for which to ignore HSTS (but if they specify HSTS in headers it will pass through to the browser! TODO: check if this is so!):
@@ -33,9 +65,9 @@ cwr.onBeforeRequest.addListener(
     if (redirecturl.substring(0,5) === "http:") {
       ishttp=true;
       details.url = redirecturl = redirecturl.slice(0,4) + "s" + redirecturl.slice(4);
-      console.log("ForcedHTTPS as: '"+redirecturl+"'")
+      log(loglevels.VERB, "ForcedHTTPS as: '"+redirecturl+"'")
     } else {
-      console.warn("!!!Sneaked url: "+redirecturl);//XXX: if this happens, it's some serious issue afoot!
+      log(loglevels.WARN, "!!!Sneaked url: "+redirecturl);//XXX: if this happens, it's some serious issue afoot!
     }
 /*    if (details.url.substring(0,5) === "http:") {//XXX: changing details.url doesn't matter!
       console.log("IMPOSSIBLE! "+details.url);
@@ -56,12 +88,12 @@ cwr.onHeadersReceived.addListener(
     force_disable=0
     if ( forceDisable.indexOf(hostn) > -1 ) {
       force_disable=1
-      console.log("Host in forceDisable list: "+fullh); //eg. https://pastebin.com
+      log(loglevels.VERB, "Host in forceDisable list: "+fullh); //eg. https://pastebin.com
     }
 
 //    ignored=false;
 		if ( ignore.indexOf(hostn) > -1 ) {
-      console.log("Host in ignore list: "+fullh); //eg. https://pastebin.com
+      log(loglevels.VERB, "Host in ignore list: "+fullh); //eg. https://pastebin.com
 //      ignored=true;
 			if (! force_disable) {//forceDisable list takes precedence over ignore list!
         return { }; //TODO: Does {} mean that no changes were perfomed to headers? so original headers are preserved? check online docs to see if this is so!
@@ -76,7 +108,7 @@ cwr.onHeadersReceived.addListener(
           //remove HSTS header if host is in ignored list; OR we can leave it and set max-age to 0 to disable HSTS...
           details.responseHeaders.splice(i,1); //remove 1 item from index i; src: http://www.w3schools.com/jsref/jsref_splice.asp
         } else {*/
-        console.log("HSTS already set in host's response headers: "+fullh+" "+details.responseHeaders[i].value); //eg. grc.com  max-age=31536000; preload
+        log(loglevels.VERB, "HSTS already set in host's response headers: "+fullh+" "+details.responseHeaders[i].value); //eg. grc.com  max-age=31536000; preload
         if ( ! force_disable ) {
     			return { };
         }
@@ -96,7 +128,7 @@ cwr.onHeadersReceived.addListener(
         //also note, if 'broken HTTPS' (eg. https://rustbyexample.com since it's hosted by github) then the above query will yield 'Not found'
 		});
 
-    console.log("Force-"+(force_disable?"disabling":"enabling")+" HSTS for: "+fullh+" "+details.responseHeaders[details.responseHeaders.length-1].value);
+    log(loglevels.VERB, "Force-"+(force_disable?"disabling":"enabling")+" HSTS for: "+fullh+" "+details.responseHeaders[details.responseHeaders.length-1].value);
 		return {responseHeaders: details.responseHeaders};
 	},
 	{
