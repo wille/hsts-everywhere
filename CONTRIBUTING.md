@@ -6,6 +6,3 @@
 4. Push to the branch (`git push origin branch-name`)
 5. Create new Pull Request
 
-## Adding hosts to ignore list
-
-Follow the steps above and provide an explanation why you the host you are ignoring is causing trouble
