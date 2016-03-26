@@ -21,7 +21,32 @@ forceDisable = forceDisable.concat([ //src: http://www.w3schools.com/jsref/jsref
 
 //Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
 
-chrome.webRequest.onHeadersReceived.addListener(
+var cwr = chrome.webRequest;
+//TODO: make logging optional! eg. depending on a var that can be set on Console!
+
+//so, this part will force all http attempts to go through https ! and if they can't because no https server is listening well, too bad... you'll get a ERR_CONNECTION_REFUSED as usual.
+cwr.onBeforeRequest.addListener(
+    function(details) {
+//  console.log(details);
+    ishttp=false;
+    redirecturl = details.url;
+    if (redirecturl.substring(0,5) === "http:") {
+      ishttp=true;
+      details.url = redirecturl = redirecturl.slice(0,4) + "s" + redirecturl.slice(4);
+      console.log("ForcedHTTPS as: '"+redirecturl+"'")
+    } else {
+      console.warn("!!!Sneaked url: "+redirecturl);//XXX: if this happens, it's some serious issue afoot!
+    }
+/*    if (details.url.substring(0,5) === "http:") {//XXX: changing details.url doesn't matter!
+      console.log("IMPOSSIBLE! "+details.url);
+      return { cancel: true }
+    }*/
+    return { redirectUrl: redirecturl } //XXX: but HTTPS-Everywhere with 'Block HTTP request' will still cancel it! because details.url it receives is the same http one!
+}, {
+  urls: ["http://*/*"],
+}, ["blocking"]);
+
+cwr.onHeadersReceived.addListener(
 	function(details) {
 	
     thisage=max_age;
