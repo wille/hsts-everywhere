@@ -2,6 +2,9 @@
 var max_age = "15570000";
 var loglevels={};
 
+//Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
+
+
 //src: https://stackoverflow.com/questions/1125256/how-to-create-a-constant-in-javascript
 function setConstant(obj, key, value) {//eg. setConstant(loglevels, "NONE", 0);
   Object.defineProperty(obj, key, {
@@ -42,9 +45,17 @@ function logwarn(msg) {
   log(loglevels.WARN, msg);
 }
 
+function loginfo(msg) {
+  log(loglevels.INFO, msg);
+}
+
+function logdebug(msg) {
+  log(loglevels.DEBUG, msg);
+}
+
 //NB: I left these two in 'ignore' as samples, but since I'm planning on permanently using HTTPS-Everywhere with 'Block HTTP requests', I won't be doing any HTTP requests ever, and thus I can afford to also set 'includeSubDomains' below.
 //This is a list of hosts for which to ignore HSTS (but if they specify HSTS in headers it will pass through to the browser! TODO: check if this is so!):
-var ignore = [
+var ignore = [//TODO: ignore in http->https redir too!
 "pastebin.com",
 "arstechnica.com",
 ];
@@ -60,7 +71,8 @@ forceDisable = forceDisable.concat([ //src: http://www.w3schools.com/jsref/jsref
     'www.w3schools.com',
 ]);
 
-//Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
+//hashmap? src: https://stackoverflow.com/questions/8877666/how-is-a-javascript-hash-map-implemented
+var redirloopdetect={}; //"hashmap"!
 
 var cwr = chrome.webRequest;
 
@@ -73,6 +85,13 @@ cwr.onBeforeRequest.addListener(
     redirecturl = details.url;
     if (redirecturl.substring(0,5) === "http:") {
       ishttp=true;
+
+      if (details.requestID in redirloopdetect) {
+        delete redirloopdetect[details.requestID];
+        loginfo("Cancelled redirect to '"+ redirecturl);
+        return { cancel: true };
+      }
+
       details.url = redirecturl = redirecturl.slice(0,4) + "s" + redirecturl.slice(4);
       logverb("ForcedHTTPS as: '"+redirecturl+"'");
     } else {
@@ -84,6 +103,27 @@ cwr.onBeforeRequest.addListener(
 }, {
   urls: ["http://*/*"],
 }, ["blocking"]);
+
+
+cwr.onBeforeRedirect.addListener(
+    function(details) {
+      //we're here because https tried to redirect to http! but we don't know if we forcefully set https and then got redirected back to http! yet.
+      loginfo("Detected https->http Redirect to '"+details.redirectUrl+"' from '"+details.url+"'");
+      //Sample url which tries to redirect indefinitely(but chromium ofc. stops it after like 11 redirs): http://www.imdb.com/title/tt0088847/
+//      console.log(details);
+      //XXX: but details.requestID is the same on each redirect!
+      //so maybe allow the redirect to happen one more time and then we know if it's in a loop!
+      if (!(details.requestID in redirloopdetect)) {
+//        delete redirloopdetect[details.requestID];
+        logdebug("Will not allow redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
+ //       return { cancel: true }//hopefully? just guessing! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
+//      }else{
+        redirloopdetect[details.requestID] = true;//any value i guess
+        //and can't cancel it here! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
+      }
+}, {
+  urls: ["https://*/*"],
+});
 
 cwr.onHeadersReceived.addListener(
 	function(details) {
