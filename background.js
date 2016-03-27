@@ -91,6 +91,7 @@ var ignore = [//TODO: ignore in http->https redir too!
   "www.merriam-webster.com",
   "www.w3schools.com",
   "batteryuniversity.com",
+  "www.thinkwiki.org",
 ];
 
 Array.prototype.clone = function() {
