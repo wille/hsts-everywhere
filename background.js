@@ -2,14 +2,14 @@
 var max_age = "15570000";
 //TODO: change log types to can do OR and show types of logs eg. show HSTS forced enabled, or forced disabled, or redirs ignored, redirs filtered,  and/or. rather than info, debug, verbose, etc.; actually make the flagvar be what NOT to log, so a value of 0 would mean log everything, and any set bits mean don't log that type of logs.
 //nope: get rid of the 'new' - nevermind: https://developer.mozilla.org/en-US/docs/Web/API/URL/URL
-var loglevels={};
+var logflags={};
 var blockhttp=true;//true if to block HTTP request for ignored hosts, false allow; otherwise, if host is not in ignore list it will be forced HTTPS! or it will fail to load(ie. if site is http only). Or in case of redirect loops(http->https->http) then the last http is allowed or not based on this value.(and that host is virtually ignored for the duration of the request and thus allowed to http complete) - TODO: also, if this is false, always log those allowed requests to Console!
 
 //Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
 
 
 //src: https://stackoverflow.com/questions/1125256/how-to-create-a-constant-in-javascript
-function setConstant(obj, key, value) {//eg. setConstant(loglevels, "NONE", 0);
+function setConstant(obj, key, value) {//eg. setConstant(logflags, "NONE", 0);
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: false,
@@ -18,20 +18,26 @@ function setConstant(obj, key, value) {//eg. setConstant(loglevels, "NONE", 0);
   });
 }
 
-setConstant(loglevels, "NONE", 00);
-setConstant(loglevels, "ERR", 10);
-setConstant(loglevels, "ERROR", 10);
-setConstant(loglevels, "WARN", 20);
-setConstant(loglevels, "INFO", 30);
-setConstant(loglevels, "VERB", 40);
-setConstant(loglevels, "VERBOSE", 40);
-setConstant(loglevels, "DEBUG", 50);
-//set this in Console! eg. loglevel = logelevels.DEBUG
-var loglevel = loglevels.NONE;//don't log anything by default, I read somewhere in passing that it's slow and saved to disk by chromium...
+//order doesn't matter, these are bit flips! when set, it will NOT show(on Console) that type of logs! (set them in 'nologbits')
+setConstant(logflags, "NONE", 0xFFFFFFFF);
+setConstant(logflags, "ALL", 0x0);
+setConstant(logflags, "ERR", 0x1);
+setConstant(logflags, "ERROR", 0x1);
+setConstant(logflags, "WARN", 0x2);
+setConstant(logflags, "INFO", 0x4);
+setConstant(logflags, "VERB", 0x8);
+setConstant(logflags, "VERBOSE", 0x8);
+setConstant(logflags, "DEBUG", 0x10);
+setConstant(logflags, "HTTPALLOW", 0x20);
 
-function log(level, msg) {//should never pass NONE level when calling!
-  if (level <= loglevel) {
-    if (level == loglevels.WARN) {
+//set this in Console! eg. nologbits = logelevels.DEBUG
+var nologbits = logflags.NONE;//don't log anything by default, I read somewhere in passing that it's slow and saved to disk by chromium...
+
+function log(logtype, msg, forceshow=false) {//should never pass NONE level when calling!
+  lognone=nologbits & logtype;
+  //console.log(lognone+" "+logtype+" "+nologbits);
+  if ( (lognone == 0) || (lognone != logtype) || (forceshow) ) {
+    if (logtype & logflags.WARN != 0) {
       console.warn(msg);
       //TODO: add console.err  or is it .error ? check and see!
     }else{
@@ -40,20 +46,24 @@ function log(level, msg) {//should never pass NONE level when calling!
   }
 }
 
+function loghttp(msg) {
+  log(logflags.HTTPALLOW | logflags.VERB, msg, false==blockhttp);
+}
+
 function logverb(msg) {
-  log(loglevels.VERBOSE, msg);
+  log(logflags.VERBOSE, msg);
 }
 
 function logwarn(msg) {
-  log(loglevels.WARN, msg);
+  log(logflags.WARN, msg);
 }
 
 function loginfo(msg) {
-  log(loglevels.INFO, msg);
+  log(logflags.INFO, msg);
 }
 
 function logdebug(msg) {
-  log(loglevels.DEBUG, msg);
+  log(logflags.DEBUG, msg);
 }
 
 //NB: I left these two in 'ignore' as samples, but since I'm planning on permanently using HTTPS-Everywhere with 'Block HTTP requests', I won't be doing any HTTP requests ever, and thus I can afford to also set 'includeSubDomains' below.
@@ -67,6 +77,7 @@ var ignore = [//TODO: ignore in http->https redir too!
   "dictionary.com",
   "www.dictionary.com",
   "www.merriam-webster.com",
+  "www.w3schools.com",
 ];
 
 Array.prototype.clone = function() {
@@ -79,6 +90,7 @@ forceDisable = forceDisable.concat([ //src: http://www.w3schools.com/jsref/jsref
     'test.com',
     'www.w3schools.com',
 ]);
+//TODO: should force http those that are in forceDisable and ignore lists AND if blockhttp == false! eg. going to https://www.w3schools.com/js/js_numbers.asp should force http by redirecting to http://www.w3schools.com/js/js_numbers.asp
 
 //hashmap? src: https://stackoverflow.com/questions/8877666/how-is-a-javascript-hash-map-implemented
 var redirloopdetect={}; //"hashmap"!
@@ -98,7 +110,7 @@ cwr.onBeforeRequest.addListener(
       hostn = new URL(redirecturl).hostname;
       fullh = hostn+" (full: "+details.url+" )";
       if ( ignore.indexOf(hostn) > -1 ) {
-        logverb("Host in ignore list: '"+fullh+"' therefore redir to https not forced! And this request is "+(blockhttp?"NOT ":"")+"allowed! Type 'blockhttp=true/false' in Console to change!");
+        loghttp("Host in ignore list: '"+fullh+"' therefore redir to https not forced! And this request is "+(blockhttp?"NOT ":"")+"allowed! Type 'blockhttp=true/false' in Console to change!");
         return { cancel: blockhttp };
       }
 
@@ -116,7 +128,7 @@ cwr.onBeforeRequest.addListener(
 //          logdebug("Blocked http to '"+ redirecturl);
           delete redirloopdetect[details.requestId];
         }else{
-          logverb("Allowed http (id="+details.requestId+") to '"+ redirecturl);
+          loghttp("Allowed http (id="+details.requestId+") to '"+ redirecturl);
         }
         return { cancel: blockhttp };//, redirectUrl: redirecturl };//HSTS being enabled and us not canceling this even tho it's a http request, will cause a https request to happen next!
       }

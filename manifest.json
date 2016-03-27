@@ -1,6 +1,6 @@
 {
 	"name": "HSTS Everywhere",
-	"version": "0.4.0.0",
+	"version": "0.4.0.1",
 	"description": "Forces all sites to use HSTS, forces https(but can allow http if set)",
 	"background": { 
 		"scripts": ["background.js"]
