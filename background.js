@@ -54,6 +54,10 @@ function loghttpallowed(msg) {
   loghttp( logflags.HTTPALLOWED, msg );
 }
 
+function loghttpblocked(msg) {
+  loghttp( logflags.HTTPBLOCKED, msg );
+}
+
 function loghttp(logtype,msg) {
   log(logtype | logflags.INFO, msg, false==blockhttp);
 }
@@ -79,8 +83,8 @@ function logdebug(msg) {
 var ignore = [//TODO: ignore in http->https redir too!
   "pastebin.com",
   "arstechnica.com",
-  "imdb.com",
-  "www.imdb.com",
+//  "imdb.com",
+//  "www.imdb.com",
   "static.sfdict.com",
   "dictionary.com",
   "www.dictionary.com",
@@ -133,7 +137,7 @@ cwr.onBeforeRequest.addListener(
           //manually add to ignore list or else it will redirect indefinitely, since we'll try to https it again!
         }*/
         if (blockhttp) {
-          loginfo("Cancelled http (id="+details.requestId+") redir-loop to '"+ redirecturl+"' (you might want to allow http or else this will never succeed!)");
+          loghttpblocked("Cancelled http (id="+details.requestId+") redir-loop to '"+ redirecturl+"' (you might want to allow http or else this will never succeed!)");
 //          logdebug("Blocked http to '"+ redirecturl);
           delete redirloopdetect[details.requestId];
         }else{
