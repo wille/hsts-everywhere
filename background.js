@@ -131,7 +131,13 @@ cwr.onBeforeRequest.addListener(
 cwr.onBeforeRedirect.addListener(
     function(details) {
       //we're here because https tried to redirect to http! but we don't know if we forcefully set https and then got redirected back to http! yet.
+      if (details.redirectUrl.substring(0,5) !== "http:") {
+        loginfo("Detected ignored redirect to '"+details.redirectUrl+"' from '"+details.url+"'");
+        return;
+      }
+      //ok, here, only redirects to http!
       loginfo("Detected https->http Redirect to '"+details.redirectUrl+"' from '"+details.url+"'");
+      //eg. "Detected https->http Redirect to 'https://www.google.com/' from 'https://google.com/'"
       //Sample url which tries to redirect indefinitely(but chromium ofc. stops it after like 11 redirs): http://www.imdb.com/title/tt0088847/
 //      console.log(details);
       //XXX: but details.requestId is the same on each redirect!
@@ -145,7 +151,7 @@ cwr.onBeforeRedirect.addListener(
         //and can't cancel it here! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
       }
 }, {
-  urls: ["https://*/*"],
+  urls: ["https://*/*"],//ok, this means the redir FROM this type of url, to any other type, is detected! eg. redir dest url can be http or https or anything else even!
 });
 
 cwr.onHeadersReceived.addListener(
