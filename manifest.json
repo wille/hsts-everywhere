@@ -10,6 +10,7 @@
 	},
 	"manifest_version": 2,
   "homepage_url": "https://github.com/respeccing/hsts-everywhere-chrome",
+  "options_page": "options.html",
 	"permissions": [
 		"webRequest",
 		"webRequestBlocking",
