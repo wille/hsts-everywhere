@@ -83,8 +83,8 @@ function logdebug(msg) {
 var ignore = [//TODO: ignore in http->https redir too!
   "pastebin.com",
   "arstechnica.com",
-//  "imdb.com",
-//  "www.imdb.com",
+  "imdb.com",
+  "www.imdb.com",
   "static.sfdict.com",
   "dictionary.com",
   "www.dictionary.com",
