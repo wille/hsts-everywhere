@@ -3,7 +3,7 @@ var max_age = "15570000";
 //TODO: change log types to can do OR and show types of logs eg. show HSTS forced enabled, or forced disabled, or redirs ignored, redirs filtered,  and/or. rather than info, debug, verbose, etc.; actually make the flagvar be what NOT to log, so a value of 0 would mean log everything, and any set bits mean don't log that type of logs.
 //nope: get rid of the 'new' - nevermind: https://developer.mozilla.org/en-US/docs/Web/API/URL/URL
 var loglevels={};
-var blockhttp=true;//true if to block HTTP request for ignored hosts, false allow; otherwise, if host is not in ignore list it will be forced HTTPS! or it will fail to load(ie. if site is http only). Or in case of redirect loops(http->https->http) then the last http is allowed or not based on this value.(and that host is virtually ignored for the duration of the request and thus allowed to http complete)
+var blockhttp=true;//true if to block HTTP request for ignored hosts, false allow; otherwise, if host is not in ignore list it will be forced HTTPS! or it will fail to load(ie. if site is http only). Or in case of redirect loops(http->https->http) then the last http is allowed or not based on this value.(and that host is virtually ignored for the duration of the request and thus allowed to http complete) - TODO: also, if this is false, always log those allowed requests to Console!
 
 //Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
 
