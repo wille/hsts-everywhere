@@ -19,6 +19,7 @@ function setConstant(obj, key, value) {//eg. setConstant(logflags, "NONE", 0);
 }
 
 //order doesn't matter, these are bit flips! when set, it will NOT show(on Console) that type of logs! (set them in 'nologbits')
+//XXX: to toggle INFO flag, type in Console: nologbits ^= logflags.INFO  (this will enable/disable showing of INFO logs)
 setConstant(logflags, "NONE", 0xFFFFFFFF);
 setConstant(logflags, "ALL", 0x0);
 setConstant(logflags, "ERR", 0x1);
@@ -47,7 +48,7 @@ function log(logtype, msg, forceshow=false) {//should never pass NONE level when
 }
 
 function loghttp(msg) {
-  log(logflags.HTTPALLOW | logflags.VERB, msg, false==blockhttp);
+  log(logflags.HTTPALLOW | logflags.INFO, msg, false==blockhttp);
 }
 
 function logverb(msg) {
