@@ -108,7 +108,7 @@ cwr.onBeforeRequest.addListener(
           //manually add to ignore list or else it will redirect indefinitely, since we'll try to https it again!
         }*/
         if (blockhttp) {
-          loginfo("Cancelled http (id="+details.requestId+") redirect to '"+ redirecturl);
+          loginfo("Cancelled http (id="+details.requestId+") redir-loop to '"+ redirecturl+"' (you might want to allow http or else this will never succeed!)");
 //          logdebug("Blocked http to '"+ redirecturl);
           delete redirloopdetect[details.requestId];
         }else{
