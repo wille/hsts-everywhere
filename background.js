@@ -218,7 +218,11 @@ cwr.onHeadersReceived.addListener(
 	},
 	{
 		urls: ["https://*/*"],//http-only will never send HSTS headers - so is the spec.!
-		types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other"]
+		types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "object", "xmlhttprequest", "other",
+    "font", "ping",
+    //rest are not accepted: "xbl", "xslt", "ping", "beacon", "xml_dtd", "font", "media", "websocket", "csp_report", "imageset", "web_manifest" src: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/WebRequest/ResourceType
+    //FIXME: catch behind-the-scenes too! eg. uBlock/uMatrix can, also they can fetch resources over http!
+    ]
 	},
 	["blocking", "responseHeaders" ]
 );
