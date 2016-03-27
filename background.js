@@ -1,6 +1,7 @@
 // Default max-age 6 months in seconds
 var max_age = "15570000";
 var loglevels={};
+var blockhttp=true;//true if to block HTTP request for ignored hosts, false allow; otherwise, if host is not in ignore list it will be forced HTTPS! or it will fail to load(ie. if site is http only). Or in case of redirect loops(http->https->http) then the last http is allowed or not based on this value.(and that host is virtually ignored for the duration of the request and thus allowed to http complete)
 
 //Note: access the following console.log() messages by going chrome://extensions/ then clicking the 'background page' seen as 'Inspect views: background page' under this extension (HSTS Everywhere) then chosing the 'Console' tab.
 
@@ -56,8 +57,10 @@ function logdebug(msg) {
 //NB: I left these two in 'ignore' as samples, but since I'm planning on permanently using HTTPS-Everywhere with 'Block HTTP requests', I won't be doing any HTTP requests ever, and thus I can afford to also set 'includeSubDomains' below.
 //This is a list of hosts for which to ignore HSTS (but if they specify HSTS in headers it will pass through to the browser! TODO: check if this is so!):
 var ignore = [//TODO: ignore in http->https redir too!
-"pastebin.com",
-"arstechnica.com",
+  "pastebin.com",
+  "arstechnica.com",
+//  "imdb.com",
+//  "www.imdb.com",
 ];
 
 Array.prototype.clone = function() {
@@ -86,10 +89,30 @@ cwr.onBeforeRequest.addListener(
     if (redirecturl.substring(0,5) === "http:") {
       ishttp=true;
 
-      if (details.requestID in redirloopdetect) {
-        delete redirloopdetect[details.requestID];
-        loginfo("Cancelled redirect to '"+ redirecturl);
-        return { cancel: true };
+      hostn = new URL(redirecturl).hostname;
+      fullh = hostn+" (full: "+details.url+" )";
+      if ( ignore.indexOf(hostn) > -1 ) {
+        logverb("Host in ignore list: '"+fullh+"' therefore redir to https not forced! And this request is "+(blockhttp?"NOT ":"")+"allowed! Type 'blockhttp=true/false' in Console to change!");
+        return { cancel: blockhttp };
+      }
+
+      if (details.requestId in redirloopdetect) {
+        if (redirecturl.substring(0,5) !== "http:") {
+          logwarn("Developer fail! this should always be 'http', it's: "+redirecturl);
+          alert("Developer fail! this should always be 'http', it's: "+redirecturl);
+        }
+        //done: maybe just redir back to http instead? and based on blockhttp allow or not
+        /*if (!blockhttp) {
+          //manually add to ignore list or else it will redirect indefinitely, since we'll try to https it again!
+        }*/
+        if (blockhttp) {
+          loginfo("Cancelled http (id="+details.requestId+") redirect to '"+ redirecturl);
+//          logdebug("Blocked http to '"+ redirecturl);
+          delete redirloopdetect[details.requestId];
+        }else{
+          logverb("Allowed http (id="+details.requestId+") to '"+ redirecturl);
+        }
+        return { cancel: blockhttp };//, redirectUrl: redirecturl };//HSTS being enabled and us not canceling this even tho it's a http request, will cause a https request to happen next!
       }
 
       details.url = redirecturl = redirecturl.slice(0,4) + "s" + redirecturl.slice(4);
@@ -111,14 +134,14 @@ cwr.onBeforeRedirect.addListener(
       loginfo("Detected https->http Redirect to '"+details.redirectUrl+"' from '"+details.url+"'");
       //Sample url which tries to redirect indefinitely(but chromium ofc. stops it after like 11 redirs): http://www.imdb.com/title/tt0088847/
 //      console.log(details);
-      //XXX: but details.requestID is the same on each redirect!
+      //XXX: but details.requestId is the same on each redirect!
       //so maybe allow the redirect to happen one more time and then we know if it's in a loop!
-      if (!(details.requestID in redirloopdetect)) {
-//        delete redirloopdetect[details.requestID];
-        logdebug("Will not allow redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
+      if (!(details.requestId in redirloopdetect)) {
+//        delete redirloopdetect[details.requestId];
+        logdebug("Flagging "+details.requestId+" redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
  //       return { cancel: true }//hopefully? just guessing! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
 //      }else{
-        redirloopdetect[details.requestID] = true;//any value i guess
+        redirloopdetect[details.requestId] = true;//any value i guess
         //and can't cancel it here! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
       }
 }, {
@@ -132,15 +155,22 @@ cwr.onHeadersReceived.addListener(
     hostn = new URL(details.url).hostname;
     fullh = hostn+" (full: "+details.url+" )";
 
-    force_disable=0
+    force_disable=false
+      if (details.requestId in redirloopdetect) {
+        delete redirloopdetect[details.requestId];
+        //this means we need to force-disable the HSTS which we already set! or else it will redir loop! but we're here because we're allowing http request after a fail of such redir to https(because that site, eg. imdb, redir-ed us to http on its own!)
+        loginfo("BOO! "+details.requestId+" "+details.url);
+        //return { cancel: true };
+        force_disable=true
+      }
     if ( forceDisable.indexOf(hostn) > -1 ) {
-      force_disable=1
+      force_disable=true
       logverb("Host in forceDisable list: "+fullh); //eg. https://pastebin.com
     }
 
 //    ignored=false;
 		if ( ignore.indexOf(hostn) > -1 ) {
-      logverb("Host in ignore list: "+fullh); //eg. https://pastebin.com
+      logverb("Host in ignore list: '"+fullh+"' therefore HSTS not forced!"); //eg. https://pastebin.com
 //      ignored=true;
 			if (! force_disable) {//forceDisable list takes precedence over ignore list!
         return { }; //TODO: Does {} mean that no changes were perfomed to headers? so original headers are preserved? check online docs to see if this is so!
