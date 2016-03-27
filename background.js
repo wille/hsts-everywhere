@@ -1,6 +1,7 @@
 // Default max-age 6 months in seconds
 var max_age = "15570000";
 //TODO: change log types to can do OR and show types of logs eg. show HSTS forced enabled, or forced disabled, or redirs ignored, redirs filtered,  and/or. rather than info, debug, verbose, etc.
+//TODO: get rid of the 'new'
 var loglevels={};
 var blockhttp=true;//true if to block HTTP request for ignored hosts, false allow; otherwise, if host is not in ignore list it will be forced HTTPS! or it will fail to load(ie. if site is http only). Or in case of redirect loops(http->https->http) then the last http is allowed or not based on this value.(and that host is virtually ignored for the duration of the request and thus allowed to http complete)
 
