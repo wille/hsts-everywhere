@@ -29,10 +29,13 @@ setConstant(logflags, "INFO", 0x4);
 setConstant(logflags, "VERB", 0x8);
 setConstant(logflags, "VERBOSE", 0x8);
 setConstant(logflags, "DEBUG", 0x10);
-setConstant(logflags, "HTTPALLOW", 0x20);
+setConstant(logflags, "HTTPALLOWED", 0x20);//XXX: this one's kinda redundant since blockhttp==false causes it to be forcefully enabled(without actually being set)
+setConstant(logflags, "HTTPBLOCKED", 0x40);
 
 //set this in Console! eg. nologbits = logelevels.DEBUG
 var nologbits = logflags.NONE;//don't log anything by default, I read somewhere in passing that it's slow and saved to disk by chromium...
+
+nologbits ^= logflags.HTTPBLOCKED;//actually do log when http gets blocked! (auto logged when http is allowed already!)
 
 function log(logtype, msg, forceshow=false) {//should never pass NONE level when calling!
   lognone=nologbits & logtype;
@@ -47,8 +50,12 @@ function log(logtype, msg, forceshow=false) {//should never pass NONE level when
   }
 }
 
-function loghttp(msg) {
-  log(logflags.HTTPALLOW | logflags.INFO, msg, false==blockhttp);
+function loghttpallowed(msg) {
+  loghttp( logflags.HTTPALLOWED, msg );
+}
+
+function loghttp(logtype,msg) {
+  log(logtype | logflags.INFO, msg, false==blockhttp);
 }
 
 function logverb(msg) {
@@ -111,7 +118,8 @@ cwr.onBeforeRequest.addListener(
       hostn = new URL(redirecturl).hostname;
       fullh = hostn+" (full: "+details.url+" )";
       if ( ignore.indexOf(hostn) > -1 ) {
-        loghttp("Host in ignore list: '"+fullh+"' therefore redir to https not forced! And this request is "+(blockhttp?"NOT ":"")+"allowed! Type 'blockhttp=true/false' in Console to change!");
+        loghttp( (blockhttp?logflags.HTTPBLOCKED:logflags.HTTPALLOWED),
+            "Host in ignore list: '"+fullh+"' therefore redir to https not forced! And this request is "+(blockhttp?"NOT ":"")+"allowed! Type 'blockhttp=true/false' in Console to change!");
         return { cancel: blockhttp };
       }
 
@@ -129,7 +137,7 @@ cwr.onBeforeRequest.addListener(
 //          logdebug("Blocked http to '"+ redirecturl);
           delete redirloopdetect[details.requestId];
         }else{
-          loghttp("Allowed http (id="+details.requestId+") to '"+ redirecturl);
+          loghttpallowed("Allowed http (id="+details.requestId+") to '"+ redirecturl);
         }
         return { cancel: blockhttp };//, redirectUrl: redirecturl };//HSTS being enabled and us not canceling this even tho it's a http request, will cause a https request to happen next!
       }
