@@ -145,12 +145,18 @@ cwr.onBeforeRedirect.addListener(
       //XXX: but details.requestId is the same on each redirect!
       //so maybe allow the redirect to happen one more time and then we know if it's in a loop!
       if (!(details.requestId in redirloopdetect)) {
-//        delete redirloopdetect[details.requestId];
-        logdebug("Flagging "+details.requestId+" redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
- //       return { cancel: true }//hopefully? just guessing! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
-//      }else{
+        //flag only when the same url (except the protocol being different!)
+        //since we're this far in, we know that details.url is https and redirectUrl is http !
+        //XXX: to test this, go here: https://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rust/25413103#25413103 then click the link with the text 'Shubham's answer'
+        if (details.url.substring(5) === details.redirectUrl.substring(4)) {
+          logdebug("Flagging "+details.requestId+" redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
+          //       return { cancel: true }//hopefully? just guessing! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
+          //      }else{
         redirloopdetect[details.requestId] = true;//any value i guess
         //and can't cancel it here! 'It does not allow you to modify or cancel the request.' src: https://developer.chrome.com/extensions/webRequest
+        } else {
+          logdebug("Not flagging "+details.requestId+" redirect to: '"+details.redirectUrl+"' from '"+details.url+"'");
+        }
       }
 }, {
   urls: ["https://*/*"],//ok, this means the redir FROM this type of url, to any other type, is detected! eg. redir dest url can be http or https or anything else even!
