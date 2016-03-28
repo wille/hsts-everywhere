@@ -93,6 +93,8 @@ var ignore = [//TODO: ignore in http->https redir too!
   "batteryuniversity.com",
   "www.thinkwiki.org",
   "www.rustacean.net",
+  "utf8everywhere.org",
+  //TODO: allow http to ignored hosts! even when blockhttp is on! perhaps add another var, blockhttptoignored=false by default!
 ];
 
 Array.prototype.clone = function() {
