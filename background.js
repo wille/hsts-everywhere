@@ -97,6 +97,7 @@ var ignore = [//TODO: ignore in http->https redir too!
   "conf.nixos.org",
   "lists.science.uu.nl",
   "news.gmane.org",
+  "www.synonym.com",
   //TODO: allow http to ignored hosts! even when blockhttp is on! perhaps add another var, blockhttptoignored=false by default!
 ];
 
