@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "outFile": "background.js",
+        "strict": true
+    },
+    "include": [
+        "blacklist.ts",
+        "background.ts"
+    ]
+}

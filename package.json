@@ -1,0 +1,21 @@
+{
+  "name": "hsts-everywhere-chrome",
+  "version": "1.0.0",
+  "description": "Forces Chrome to use HTTP Strict Transport Security on all HTTPS connections",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redpois0n/hsts-everywhere-chrome.git"
+  },
+  "bugs": {
+    "url": "https://github.com/redpois0n/hsts-everywhere-chrome/issues"
+  },
+  "homepage": "https://github.com/redpois0n/hsts-everywhere-chrome#readme",
+  "dependencies": {
+    "@types/chrome": "0.0.49",
+    "typescript": "^2.5.3"
+  }
+}
