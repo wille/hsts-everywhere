@@ -1,6 +1,6 @@
 {
   "name": "hsts-everywhere-chrome",
-  "version": "1.0.0",
+  "version": "0.3.5",
   "description": "Forces Chrome to use HTTP Strict Transport Security on all HTTPS connections",
   "main": "background.js",
   "scripts": {
