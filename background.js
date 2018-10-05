@@ -1,11 +1,16 @@
+/// <reference path="node_modules/web-ext-types/global/index.d.ts" />
 // Default max-age 6 months in seconds
 var max_age = "15570000";
 
+if (chrome) {
+  browser = chrome;
+}
+
 var ignore = [
-"www.w3.org",	
-"www.nytimes.com",	
-"api.twitch.tv",	
-"www.aftonbladet.se",	
+"www.w3.org",
+"www.nytimes.com",
+"api.twitch.tv",
+"www.aftonbladet.se",
 "streams.twitch.tv",
 "9gag.com",
 "pastebin.com",
@@ -60,23 +65,22 @@ var ignore = [
 "www.tre.se"
 ];
 
-chrome.webRequest.onHeadersReceived.addListener(
+browser.webRequest.onHeadersReceived.addListener(
 	function(details) {
-	
-		if ( ignore.indexOf(new URL(details.url).hostname) > -1 )
-			return { };
-		
-		for (var i = 0; i < details.responseHeaders.length; i++) {
-			if (details.responseHeaders[i].name.toLowerCase() === "strict-transport-security")
-			return { };
-		}
-		
-		details.responseHeaders.push({
-			"name": "Strict-Transport-Security",
-			"value": "max-age=" + max_age + ";"
-		});
+		if (ignore.indexOf(new URL(details.url).hostname) > -1)
+			return;
 
-		return {responseHeaders: details.responseHeaders};
+		for (const header of details.responseHeaders) {
+			if (header.name.toLowerCase() === "strict-transport-security") {
+        console.log("Skipping", details.url, 'because of existing HSTS header');
+        return;
+      }
+		}
+
+		details.responseHeaders.push({
+			name: "Strict-Transport-Security",
+			value: `max-age="${max_age}";`
+		});
 	},
 	{
 		urls: ["https://*/*"],

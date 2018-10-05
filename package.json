@@ -1,0 +1,32 @@
+{
+  "name": "hsts-everywhere",
+  "version": "1.0.0",
+  "description": "![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ingdjdekfhnapeoiiinplcadnfimnnkh.svg)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/d/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wille/hsts-everywhere.git"
+  },
+  "keywords": [
+    "hsts",
+    "chrome",
+    "firefox",
+    "web",
+    "extension",
+    "addon"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wille/hsts-everywhere/issues"
+  },
+  "homepage": "https://github.com/wille/hsts-everywhere#readme",
+  "dependencies": {
+    "@types/chrome": "0.0.74",
+    "web-ext": "^2.9.1",
+    "web-ext-types": "^2.2.0"
+  }
+}
