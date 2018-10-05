@@ -67,12 +67,14 @@ var ignore = [
 
 browser.webRequest.onHeadersReceived.addListener(
 	function(details) {
-		if (ignore.indexOf(new URL(details.url).hostname) > -1)
+		if (ignore.indexOf(new URL(details.url).hostname) > -1) {
+      console.log("Blocked HSTS enforcement on:", details.url);
 			return;
+    }
 
 		for (const header of details.responseHeaders) {
 			if (header.name.toLowerCase() === "strict-transport-security") {
-        console.log("Skipping", details.url, 'because of existing HSTS header');
+        console.log("Skipping because of existing header:", details.url);
         return;
       }
 		}
