@@ -9,3 +9,5 @@
 ## Adding hosts to ignore list
 
 Follow the steps above and provide an explanation why you the host you are ignoring is causing trouble
+
+See [matcher](https://www.npmjs.com/package/matcher) for wildcard matching
