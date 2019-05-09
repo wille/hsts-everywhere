@@ -5,8 +5,9 @@
   "main": "background.js",
   "scripts": {
     "start": "web-ext run",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production --output background.js"
+    "lint": "eslint --fix src/*",
+    "build": "webpack --mode production --output background.js",
+    "pack": "web-ext build -i src package*.json *.md"
   },
   "repository": {
     "type": "git",
