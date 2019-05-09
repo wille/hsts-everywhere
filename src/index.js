@@ -1,14 +1,11 @@
 /// <reference path="../node_modules/web-ext-types/global/index.d.ts" />
 
+import browser from 'webextension-polyfill';
 import matcher from 'matcher';
 import ignoreRules from './rules.json';
  
 // Default max-age 6 months in seconds
 const max_age = "15570000";
-
-if (chrome) {
-  browser = chrome;
-}
 
 function onHeadersReceived(details) {
 	const url = new URL(details.url);

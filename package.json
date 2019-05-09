@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/wille/hsts-everywhere#readme",
   "dependencies": {
-    "matcher": "^1.1.1"
+    "matcher": "^1.1.1",
+    "webextension-polyfill": "^0.4.0"
   },
   "devDependencies": {
     "@types/chrome": "0.0.74",
