@@ -1,17 +1,20 @@
 {
-	"name": "HSTS Everywhere",
-	"version": "0.3.5",
-	"description": "Forces all sites to use HSTS",
-	"background": { 
-		"scripts": ["background.js"]
-	},
-	"icons": {
-		"128": "icon.png"
-	},
-	"manifest_version": 2,
-	"permissions": [
-		"webRequest",
-		"webRequestBlocking",
-		"https://*/*"
-	]
+  "name": "HSTS Everywhere",
+  "version": "0.4.0.1",
+  "description": "Forces all sites to use HSTS, forces https (but can allow http if set)",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "manifest_version": 2,
+  "homepage_url": "https://github.com/wille/hsts-everywhere",
+  "options_page": "options.html",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "https://*/*",
+    "http://*/*"
+  ]
 }
