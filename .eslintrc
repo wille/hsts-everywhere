@@ -1,16 +1,17 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "webextensions": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "rules": {
-        "no-console": "off",
-        "no-global-assign": "off"
-    }
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {
+    "max-len": "off",
+    "no-console": "off",
+    "no-global-assign": "off"
+  }
 }
