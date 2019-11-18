@@ -2,7 +2,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "webextensions": true
+    "webextensions": true,
+    "node": true,
   },
   "extends": "eslint:recommended",
   "parserOptions": {
@@ -12,6 +13,7 @@
   "rules": {
     "max-len": "off",
     "no-console": "off",
-    "no-global-assign": "off"
+    "no-global-assign": "off",
+    "quotes": ["error", "single"]
   }
 }
