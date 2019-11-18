@@ -1,4 +1,4 @@
 node_modules/
 web-ext-artifacts/
 background.js
-
+test/cert.pem

@@ -1,13 +1,14 @@
 {
   "name": "hsts-everywhere",
   "version": "1.0.0",
-  "description": "![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ingdjdekfhnapeoiiinplcadnfimnnkh.svg)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/d/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)\r ![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/ingdjdekfhnapeoiiinplcadnfimnnkh.svg?maxAge=2592000)",
+  "description": "",
   "main": "background.js",
   "scripts": {
     "start": "web-ext run",
-    "lint": "eslint --fix src/*",
+    "lint": "eslint --fix src/ test/",
     "build": "webpack --mode production --output background.js",
-    "pack": "web-ext build -i src package*.json *.md"
+    "pack": "web-ext build -i src package*.json *.md",
+    "certificate": "openssl req -x509 -newkey rsa:2048 -sha256 -days 3650 -nodes  -keyout test/cert.pem -out test/cert.pem -subj /CN=localhost  -addext subjectAltName=DNS:localhost,IP:127.0.0.1"
   },
   "repository": {
     "type": "git",
