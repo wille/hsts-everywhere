@@ -12,6 +12,7 @@
 	"permissions": [
 		"webRequest",
 		"webRequestBlocking",
-		"https://*/*"
+		"https://*/*",
+		"http://*/*"
 	]
 }
