@@ -1,8 +1,7 @@
 /// <reference path="../node_modules/web-ext-types/global/index.d.ts" />
 
 import browser from 'webextension-polyfill';
-import matcher from 'matcher';
-import ignoreRules from './rules.json';
+import ignoreRules from './rules';
 
 // Default max-age 6 months in seconds
 const max_age = '15570000';
@@ -11,7 +10,13 @@ const blockHttp = false;
 const redirLoop = {};
 
 function ignore(hostname) {
-  return matcher([hostname], ignoreRules).length > 0;
+  for (const rule of ignoreRules) {
+    if (rule instanceof RegExp && rule.test(hostname) || rule === hostname) {
+      return true; 
+    }
+  }
+
+  return false;
 }
 
 browser.webRequest.onBeforeRequest.addListener(
