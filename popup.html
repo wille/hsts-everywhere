@@ -1,13 +1,41 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <style>
+      body {
+        width: 300px;
+        margin: 12px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        cursor: pointer;
+      }
+
+      .text {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+      }
+
+      span {
+        color: gray;
+      }
+    </style>
   </head>
   <body>
-    <input type="checkbox" id="blockHttp" />
-    <label for="blockHttp">
-      Block HTTP Downgrades
-      <span>Blocks downgrades to HTTP. Escaping out of redirect loops by default</span>
-    </label>
-    <script src="dist/popup.js"></script>
+    <div class="container">
+      <input type="checkbox" id="blockHttp" />
+      <label class="text" for="blockHttp">
+        Block HTTP Downgrades
+        <span>
+          Some websites redirects from https to http and causes a redirect loop when
+          the browser tries to upgrade to HTTPS
+        </span>
+      </label>
+      <script src="dist/popup.js"></script>
+    </div>
   </body>
 </html>
