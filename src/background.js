@@ -1,11 +1,17 @@
 /// <reference path="../node_modules/web-ext-types/global/index.d.ts" />
 
-import browser from 'webextension-polyfill';
+import * as browser from 'webextension-polyfill';
 import ignoreRules from './rules';
 
 // Default max-age 6 months in seconds
 const max_age = '15570000';
-const blockHttp = false;
+
+let blockHttpDowngrades = false;
+
+setImmediate(async function() {
+  const sync = await browser.storage.sync.get('blockHttp');
+  blockHttpDowngrades = sync.blockHttp;
+});
 
 const redirLoop = {};
 
@@ -19,10 +25,16 @@ function ignore(hostname) {
   return false;
 }
 
+browser.storage.onChanged.addListener(function(changes) {
+  if (changes.blockHttp) {
+    blockHttpDowngrades = changes.blockHttp.newValue;
+  }
+})
+
 browser.webRequest.onBeforeRequest.addListener(
   function(details) {
     if (details.requestId in redirLoop) {
-      if (blockHttp) {
+      if (blockHttpDowngrades) {
         console.log(
           'Cancelled http (id=' +
             details.requestId +
@@ -35,7 +47,7 @@ browser.webRequest.onBeforeRequest.addListener(
         console.log('Allowed http (id=' + details.requestId + ') to \'' + details.url);
       }
 
-      return { cancel: blockHttp };
+      return { cancel: blockHttpDowngrades };
     }
   },
   { urls: ['http://*/*'] },
@@ -70,6 +82,8 @@ browser.webRequest.onBeforeRedirect.addListener(
 
 browser.webRequest.onHeadersReceived.addListener(
   function onHeadersReceived(details) {
+    console.log("blockhttp", blockHttpDowngrades)
+
     const url = new URL(details.url);
 
     let forceDisable = false;
